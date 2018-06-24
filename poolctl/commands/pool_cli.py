@@ -21,6 +21,8 @@ template = pkg_resources.resource_stream(resource_package, resource_path)
 @click.option('--pool-credential',
               default=lambda: os.environ.get('POOL_CREDENTIAL', ''),
               help='The pool password or api key.')
+@click.option('--pool-yaml',
+              help='The system information of pools.')
 @click.option('--verbose',
               type=click.Choice(['debug', 'info', 'warning', 'error',
                                  'critical']),
@@ -28,7 +30,7 @@ template = pkg_resources.resource_stream(resource_package, resource_path)
               help='Verbose level corresponding to logging level.')
 @click.option('--conf',
               help='Configuration file.')
-def main(pool_username, pool_credential, verbose, conf):
+def main(pool_username, pool_credential, pool_yaml, verbose, conf):
     # Pass the global options and configuration by the configuration singlet.
     # configuration singlet initialization
     conf_singlet = pconfig.Configuration.get_instance()
@@ -50,7 +52,6 @@ def main(pool_username, pool_credential, verbose, conf):
         pool_credential = conf_singlet.config['POOL']['credential']
 
     pool_uri = conf_singlet.config['POOL']['uri']
-
 
     try:
         verbose = conf_singlet.config['GENERAL']['verbose']

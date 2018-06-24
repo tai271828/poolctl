@@ -1,0 +1,10 @@
+- trusty:
+    - srutype: stock
+    - systems:
+        - 201302-12681
+        - 201302-12728
+- trusty-hwe:
+    - srutype: stock
+    - systems:
+        - 201302-12681
+        - 201302-12728
