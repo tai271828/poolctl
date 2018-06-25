@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import jenkins
 import time
+import logging
 import poolctl.config
 
+
+logger = logging.getLogger('poolctl')
 
 conf_singlet = poolctl.config.Configuration.get_instance()
 
@@ -29,7 +32,7 @@ def get_jobs(pool_group):
             codename = pool_group.split('-')[0]
             job = srutype + '-hwe-sru-' + codename + '-desktop-' + system
         else:
-            job = srutype + '-sru' + pool_group + '-desktop-' + system
+            job = srutype + '-sru-' + pool_group + '-desktop-' + system
 
         projects_to_operate.append(job)
 
@@ -37,15 +40,17 @@ def get_jobs(pool_group):
 
 
 def build(projects_to_build, server, param=None):
+    logger.info('Begin to build jobs.')
     # Trigger the build
     for project in projects_to_build:
         server.build_job(project, param)
+
+    logger.info('Complete to trigger builds')
 
     # Wait for a bit to make sure every job begin to build
     time.sleep(10)
 
     # Collect build info
-
     for project in projects_to_build:
         job_info = server.get_job_info(project)
         last_build_number = job_info['lastBuild']['number']
@@ -55,6 +60,4 @@ def build(projects_to_build, server, param=None):
         elif server.get_queue_info()[0]['blocked']:
             print('Project: %s is pending. Build number: %i' % (project, last_build_number))
         else:
-            import ipdb
-            ipdb.set_trace()
             raise Exception('Unknown build status.')

@@ -1,7 +1,6 @@
 import os
 import click
 import logging
-import pkg_resources
 import poolctl.config as pconfig
 from poolctl.commands.jenkins import commands as cmd_jenkins
 
