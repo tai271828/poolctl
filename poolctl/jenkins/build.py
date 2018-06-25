@@ -18,9 +18,14 @@ def get_connection():
 
 
 def get_jobs(pool_group):
+    pool_target = []
     for pool in conf_singlet.pool:
         if pool_group in pool:
             pool_target = pool[pool_group]
+
+    if len(pool_target) == 0:
+        logging.debug("No associated pool was assigned or no system is given.")
+        return []
 
     # prepare the associated real jenkins names
     srutype = pool_target[0]['srutype']
