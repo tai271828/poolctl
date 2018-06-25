@@ -8,11 +8,6 @@ from poolctl.commands.jenkins import commands as cmd_jenkins
 
 logger = logging.getLogger('poolctl')
 
-resource_package = __name__
-resource_path = '/'.join(('../data', 'default.ini'))
-
-template = pkg_resources.resource_stream(resource_package, resource_path)
-
 
 @click.group()
 @click.option('--pool-username',
@@ -34,8 +29,7 @@ def main(pool_username, pool_credential, pool_yaml, verbose, conf):
     # Pass the global options and configuration by the configuration singlet.
     # configuration singlet initialization
     conf_singlet = pconfig.Configuration.get_instance()
-    # ready default.ini to get every basic attribute ready
-    conf_singlet.read_configuration(template.name)
+
     if conf:
         logger.debug('User customized conf is specified.')
         conf_singlet.read_configuration(conf)
@@ -51,8 +45,6 @@ def main(pool_username, pool_credential, pool_yaml, verbose, conf):
     else:
         pool_credential = conf_singlet.config['POOL']['credential']
 
-    pool_uri = conf_singlet.config['POOL']['uri']
-
     try:
         verbose = conf_singlet.config['GENERAL']['verbose']
     except KeyError:
@@ -63,5 +55,8 @@ def main(pool_username, pool_credential, pool_yaml, verbose, conf):
     logging.debug('Credential: %s' % pool_credential)
     logging.debug('Output verbose level: %s' % verbose)
 
+    if pool_yaml:
+        logger.debug('User customized pool yaml is provided.')
+        conf_singlet.read_pool(pool_yaml)
 
 main.add_command(cmd_jenkins.jenkins)

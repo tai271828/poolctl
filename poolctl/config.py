@@ -3,8 +3,9 @@ Global config singlet.
 """
 import pkg_resources
 import logging
-import yaml
 from configparser import ConfigParser
+from poolctl.io import yaml as pyaml
+
 
 logger = logging.getLogger('poolctl')
 
@@ -67,13 +68,5 @@ class Configuration(object):
 
         self.config = config
 
-    def read_pool(self, pool_yaml=template_pool):
-        with open(template_pool.name, 'r') as stream:
-            try:
-                yaml_load = yaml.load(stream)
-            except yaml.YAMLError as e:
-                logger.critical(e)
-                logger.critical('No yaml was found at %s' % pool_yaml)
-
-            self.pool = yaml_load
-
+    def read_pool(self, pool_yaml=template_pool.name):
+        self.pool = pyaml.read_yaml(pool_yaml)
